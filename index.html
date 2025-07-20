@@ -83,6 +83,14 @@
     function switchTab(tabId) {
       document.getElementById('register').classList.add('hidden');
       document.getElementById('list').classList.add('hidden');
+      document.getElementById('used').classList.add('hidden');
+
+      // ✅ 他のタブを押したら使用済みテーブルをリセット
+      if (tabId !== 'used') {
+        const usedContainer = document.getElementById('usedContainer');
+        if (usedContainer) usedContainer.innerHTML = "";
+      }
+      document.getElementById('list').classList.add('hidden');
       document.getElementById(tabId).classList.remove('hidden');
       if (tabId === 'list') renderInventory();
       if (tabId === 'used') renderUsedInventory();
@@ -187,9 +195,7 @@
     }
 
 
-    window.addEventListener("DOMContentLoaded", () => {
-      renderInventory();
-    });
+    window.addEventListener("DOMContentLoaded", () => {});
   </script>
 </body>
 </html>
@@ -205,4 +211,32 @@
 8. コード順序変更なし: ✅
 前回の失敗: 使用ボタンに Firebase push() がなかった
 今回の修正: useItem() 内に usedReports.push() を追加し記録対応済み
+-->
+
+
+<!-- ✅ 修正チェック項目（再追加）
+1. localStorage の残存チェック: ❌
+2. usedLogs の残存チェック: ❌
+3. reportUsed() に Firebase push() が含まれているか: ✅
+4. コメント（前回の失敗・今回の修正）: ✅
+5. </html> タグの存在: ✅
+6. .filter(item => item.remaining > 0): ✅
+7. レイアウト構造変更なし: ✅
+8. コード順序変更なし: ✅
+前回の失敗: 一覧タブ以外でも在庫一覧が表示されていた（renderInventory が常に走っていた）
+今回の修正: DOMContentLoaded で renderInventory を呼ばず、switchTab 経由のみに制限
+-->
+
+
+<!-- ✅ 修正チェック項目（最終版）
+1. localStorage の残存チェック: ❌
+2. usedLogs の残存チェック: ❌
+3. reportUsed() に Firebase push() が含まれているか: ✅
+4. コメント（前回の失敗・今回の修正）: ✅
+5. </html> タグの存在: ✅
+6. .filter(item => item.remaining > 0): ✅
+7. レイアウト構造変更なし: ✅
+8. コード順序変更なし: ✅
+前回の失敗: 使用済み一覧を見たあと「一覧」に戻ると表示が残ってしまう
+今回の修正: switchTab() 内で usedContainer の中身をリセットするように対応済み
 -->
