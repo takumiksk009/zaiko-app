@@ -26,8 +26,15 @@
   <h1>在庫管理（Firebase対応）</h1>
 
   <div class="tab">
+<div class="tab">
+  <a href="inventory-used.html"><button>使用済み一覧</button></a>
+  <a href="rinnai_order_form.html"><button>リンナイ注文書</button></a>
+</div>
+
     <button onclick="switchTab('register')">登録</button>
     <button onclick="switchTab('list')">一覧</button>
+    <button onclick="switchTab('used')">使用済み一覧</button>
+
   </div>
 
   <div id="register" class="section">
@@ -40,6 +47,12 @@
     <input type="text" id="site" placeholder="現場名">
     <input type="date" id="date">
     <button onclick="addInventory()">登録</button>
+  </div>
+
+  
+  <div id="used" class="section hidden">
+    <h2>使用済み在庫一覧</h2>
+    <div id="usedContainer">ここに使用済み一覧が表示されます</div>
   </div>
 
   <div id="list" class="section hidden">
@@ -72,6 +85,7 @@
       document.getElementById('list').classList.add('hidden');
       document.getElementById(tabId).classList.remove('hidden');
       if (tabId === 'list') renderInventory();
+      if (tabId === 'used') renderUsedInventory();
     }
 
     function addInventory() {
@@ -129,6 +143,36 @@
       dbRef.child(key).remove();
       renderInventory();
     }
+
+    
+    function renderUsedInventory() {
+      const container = document.getElementById("usedContainer");
+      container.innerHTML = "<p>使用済みデータを読み込み中...</p>";
+
+      const usedRef = firebase.database().ref("usedReports");
+      usedRef.once("value").then(snapshot => {
+        const usedItems = snapshot.val();
+        if (!usedItems) {
+          container.innerHTML = "<p>使用済みデータはありません。</p>";
+          return;
+        }
+
+        let html = "<table><thead><tr><th>登録者</th><th>型式</th><th>カテゴリ</th><th>使用日</th></tr></thead><tbody>";
+        Object.values(usedItems).forEach(item => {
+          html += `<tr>
+            <td>${item.user || ""}</td>
+            <td>${item.model || ""}</td>
+            <td>${item.category || ""}</td>
+            <td>${item.date || ""}</td>
+          </tr>`;
+        });
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }).catch(error => {
+        container.innerHTML = "<p>読み込みエラー: " + error + "</p>";
+      });
+    }
+
 
     window.addEventListener("DOMContentLoaded", () => {
       renderInventory();
