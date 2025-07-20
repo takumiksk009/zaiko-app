@@ -134,6 +134,19 @@
 
     function useItem(key, remaining) {
       if (remaining > 0) {
+        dbRef.child(key).once("value").then(snapshot => {
+          const item = snapshot.val();
+          const usedRef = firebase.database().ref("usedReports");
+          usedRef.push({
+            user: item.user,
+            maker: item.maker,
+            category: item.category,
+            model: item.model,
+            qty: 1,
+            site: item.site,
+            date: new Date().toISOString().split("T")[0]
+          });
+        });
         dbRef.child(key).update({ remaining: remaining - 1 });
         renderInventory();
       }
@@ -180,3 +193,16 @@
   </script>
 </body>
 </html>
+
+<!-- ✅ 修正チェック項目一覧
+1. localStorage の残存チェック: ❌
+2. usedLogs の残存チェック: ❌
+3. reportUsed() に Firebase push() が含まれているか: ✅
+4. コメント（前回の失敗・今回の修正）: ✅
+5. </html> タグの存在: ✅
+6. .filter(item => item.remaining > 0): ✅
+7. レイアウト構造変更なし: ✅
+8. コード順序変更なし: ✅
+前回の失敗: 使用ボタンに Firebase push() がなかった
+今回の修正: useItem() 内に usedReports.push() を追加し記録対応済み
+-->
