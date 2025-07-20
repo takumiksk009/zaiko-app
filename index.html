@@ -54,6 +54,23 @@ button:hover {
     font-size: 18px;
   }
 }
+
+/* ✅ テーブル横スクロール対応 */
+@media (max-width: 768px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    min-width: 700px;
+  }
+}
+
+/* ✅ テーブル列の文字サイズ調整と余白追加 */
+th, td {
+  font-size: 15px;
+  padding: 10px;
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js">
     const tempOrders = [];
@@ -222,12 +239,12 @@ function sendToOrderForm(index) {
 </div>
 <div class="section hidden" id="list">
 <h2>在庫一覧</h2>
-<table>
+<div class="table-scroll"><table>
 <thead>
 <tr><th>登録者</th><th>メーカー</th><th>カテゴリ</th><th>型式</th><th>個数</th><th>現場名</th><th>注文日</th><th>操作</th></tr>
 </thead>
 <tbody id="inventoryBody"></tbody>
-</table>
+</table></div>
 </div>
 <script>
     const firebaseConfig = {
