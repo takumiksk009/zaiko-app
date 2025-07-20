@@ -306,32 +306,51 @@ function sendToOrderForm(index) {
 
     
     function renderUsedInventory() {
-      const container = document.getElementById("usedContainer");
-      container.innerHTML = "<p>使用済みデータを読み込み中...</p>";
+  const container = document.getElementById("usedContainer");
+  container.innerHTML = "<p>使用済みデータを読み込み中...</p>";
 
-      const usedRef = firebase.database().ref("usedReports");
-      usedRef.once("value").then(snapshot => {
-        const usedItems = snapshot.val();
-        if (!usedItems) {
-          container.innerHTML = "<p>使用済みデータはありません。</p>";
-          return;
-        }
-
-        let html = "<table><thead><tr><th>登録者</th><th>型式</th><th>カテゴリ</th><th>使用日</th></tr></thead><tbody>";
-        Object.values(usedItems).forEach(item => {
-          html += `<tr>
-            <td>${item.user || ""}</td>
-            <td>${item.model || ""}</td>
-            <td>${item.category || ""}</td>
-            <td>${item.date || ""}</td>
-          </tr>`;
-        });
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      }).catch(error => {
-        container.innerHTML = "<p>読み込みエラー: " + error + "</p>";
-      });
+  const usedRef = firebase.database().ref("usedReports");
+  usedRef.once("value").then(snapshot => {
+    const usedItems = snapshot.val();
+    if (!usedItems) {
+      container.innerHTML = "<p>使用済みデータはありません。</p>";
+      return;
     }
+
+    let html = `
+    <div style='margin-bottom: 10px; text-align: right;'>
+      <button onclick="toggleEditMode()">✏ 編集</button>
+      <button onclick="saveUsedPrices()">📌 納入価格を保存</button>
+      <button id="deleteSelectedBtn" onclick="deleteSelectedUsed()" style="display:none;">❌ 選択削除</button>
+    </div>
+    <table><thead>
+    <tr>
+      <th>登録者</th>
+      <th>型式</th>
+      <th>カテゴリ</th>
+      <th>使用日</th>
+      <th>納入価格</th>
+      <th class="used-checkbox-col" style="display:none;">選択</th>
+    </tr></thead><tbody>`;
+
+    Object.entries(usedItems).forEach(([key, item]) => {
+      html += `
+      <tr>
+        <td>${item.user || ""}</td>
+        <td>${item.model || ""}</td>
+        <td>${item.category || ""}</td>
+        <td>${item.date || ""}</td>
+        <td><input type="text" class="used-price-input" data-key="${key}" value="${item.price || ''}" placeholder="0円" style="width: 80px; text-align: right;"></td>
+        <td class="used-checkbox-col" style="display:none;"><input type="checkbox" class="used-delete-check" data-key="${key}"></td>
+      </tr>`;
+    });
+
+    html += "</tbody></table>";
+    container.innerHTML = html;
+  }).catch(error => {
+    container.innerHTML = "<p>読み込みエラー: " + error + "</p>";
+  });
+}
 
 
     window.addEventListener("DOMContentLoaded", () => {});
@@ -569,4 +588,62 @@ function deleteOrderFromFirebase(key) {
   }
 }
 
+</script>
+
+<script>
+// ✅ 使用済みデータから削除
+function deleteUsedReport(key) {
+  if (confirm("本当に削除しますか？")) {
+    const usedRef = firebase.database().ref("usedReports");
+    usedRef.child(key).remove();
+    renderUsedInventory();
+    alert("使用済みデータを削除しました！");
+  }
+}
+</script>
+
+<script>
+let usedEditMode = false;
+
+function toggleEditMode() {
+  usedEditMode = !usedEditMode;
+  document.querySelectorAll('.used-checkbox-col').forEach(el => {
+    el.style.display = usedEditMode ? '' : 'none';
+  });
+  const btn = document.getElementById("deleteSelectedBtn");
+  if (btn) btn.style.display = usedEditMode ? 'inline-block' : 'none';
+}
+
+function saveUsedPrices() {
+  const inputs = document.querySelectorAll('.used-price-input');
+  const updates = {};
+  inputs.forEach(input => {
+    const key = input.dataset.key;
+    let value = input.value.replace(/[^\d]/g, '');
+    value = value ? parseInt(value, 10).toLocaleString() + '円' : '';
+    updates[key] = value;
+  });
+
+  const usedRef = firebase.database().ref("usedReports");
+  Object.entries(updates).forEach(([key, price]) => {
+    usedRef.child(key).update({ price });
+  });
+
+  alert("納入価格を保存しました！");
+}
+
+function deleteSelectedUsed() {
+  const checked = document.querySelectorAll('.used-delete-check:checked');
+  if (!checked.length) return alert("削除する項目が選択されていません！");
+  if (!confirm("選択した項目を削除します。よろしいですか？")) return;
+
+  const usedRef = firebase.database().ref("usedReports");
+  checked.forEach(cb => {
+    const key = cb.dataset.key;
+    usedRef.child(key).remove();
+  });
+
+  alert("削除しました！");
+  setTimeout(() => location.reload(), 800);
+}
 </script>
