@@ -62,6 +62,13 @@ button:hover {
     -webkit-overflow-scrolling: touch;
   }
   table {
+    min-width: 900px;
+  }
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
     min-width: 700px;
   }
 }
@@ -229,11 +236,11 @@ function sendToOrderForm(index) {
 <input id="date" type="date"/>
 <button onclick="addInventory()">注文する</button>
 <h3>注文済みリスト</h3>
-<div id="orderListContainer">ここに注文した商品が表示されます</div>
+<div class="table-scroll"><div id="orderListContainer">ここに注文した商品が表示されます</div></div>
 </div>
 <div class="section hidden" id="used">
 <h2>使用済み在庫一覧</h2>
-<div id="usedContainer">ここに使用済み一覧が表示されます</div>
+<div class="table-scroll"><div id="usedContainer">ここに使用済み一覧が表示されます</div></div>
 </div>
 <div class="section hidden" id="list">
 <h2>在庫一覧</h2>
