@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>在庫管理サンプル</title>
+  <title>在庫管理サンプル（Firebase対応）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: sans-serif; background: #f5f5f5; padding: 20px; color: #2c3e50; }
@@ -20,9 +19,11 @@
     .tab button { padding: 10px; margin-right: 5px; }
     .hidden { display: none; }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 </head>
 <body>
-  <h1>在庫管理（1ファイルサンプル）</h1>
+  <h1>在庫管理（Firebase対応）</h1>
 
   <div class="tab">
     <button onclick="switchTab('register')">登録</button>
@@ -52,7 +53,19 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "zaiko_data";
+    const firebaseConfig = {
+      apiKey: "AIzaSyARhO9hECPxXopKRBZrHBAkboqmCxY651i0",
+      authDomain: "zaiko-app-54fa6.firebaseapp.com",
+      databaseURL: "https://zaiko-app-54fa6-default-rtdb.firebaseio.com",
+      projectId: "zaiko-app-54fa6",
+      storageBucket: "zaiko-app-54fa6.appspot.com",
+      messagingSenderId: "615970420186",
+      appId: "1:615970420186:web:8eab3b94d70da28f5bce3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const dbRef = db.ref("inventories");
 
     function switchTab(tabId) {
       document.getElementById('register').classList.add('hidden');
@@ -61,16 +74,7 @@
       if (tabId === 'list') renderInventory();
     }
 
-    function getData() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    }
-
-    function saveData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
     function addInventory() {
-      const data = getData();
       const newItem = {
         user: document.getElementById('user').value,
         maker: document.getElementById('maker').value,
@@ -79,55 +83,50 @@
         qty: parseInt(document.getElementById('qty').value) || 0,
         site: document.getElementById('site').value,
         date: document.getElementById('date').value,
-        id: Date.now()
+        remaining: parseInt(document.getElementById('qty').value) || 0,
+        timestamp: Date.now()
       };
-      data.push(newItem);
-      saveData(data);
+      dbRef.push(newItem);
       alert("登録しました！");
       document.querySelectorAll('#register input').forEach(el => el.value = "");
     }
 
     function renderInventory() {
-      const data = getData();
-      const tbody = document.getElementById('inventoryBody');
-      tbody.innerHTML = "";
-      data.filter(item => item.qty > 0).forEach((item, index) => {
-        // 🔧 修正内容：qty（残数）が0の在庫は表示から除外（自動非表示化）
-        // 前回の失敗：全データ表示していたため、残数0が残っていた
-    
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${item.user}</td>
-          <td>${item.maker}</td>
-          <td>${item.category}</td>
-          <td>${item.model}</td>
-          <td>${item.qty}</td>
-          <td>${item.site}</td>
-          <td>${item.date}</td>
-          <td class="actions">
-            <button onclick="useItem(${item.id})">使用</button>
-            <button onclick="deleteItem(${item.id})">削除</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
+      dbRef.once("value", snapshot => {
+        const tbody = document.getElementById("inventoryBody");
+        tbody.innerHTML = "";
+        snapshot.forEach(child => {
+          const item = child.val();
+          if (item.remaining > 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${item.user}</td>
+              <td>${item.maker}</td>
+              <td>${item.category}</td>
+              <td>${item.model}</td>
+              <td>${item.remaining}</td>
+              <td>${item.site}</td>
+              <td>${item.date}</td>
+              <td class="actions">
+                <button onclick="useItem('${child.key}', ${item.remaining})">使用</button>
+                <button onclick="deleteItem('${child.key}')">削除</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
       });
     }
 
-    function useItem(id) {
-      let data = getData();
-      data = data.map(item => {
-        if (item.id === id && item.qty > 0) {
-          item.qty -= 1;
-        }
-        return item;
-      });
-      saveData(data);
-      renderInventory();
+    function useItem(key, remaining) {
+      if (remaining > 0) {
+        dbRef.child(key).update({ remaining: remaining - 1 });
+        renderInventory();
+      }
     }
 
-    function deleteItem(id) {
-      let data = getData().filter(item => item.id !== id);
-      saveData(data);
+    function deleteItem(key) {
+      dbRef.child(key).remove();
       renderInventory();
     }
 
