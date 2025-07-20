@@ -233,6 +233,8 @@ function sendToOrderForm(index) {
 <input id="model" placeholder="型式" type="text"/>
 <input id="qty" placeholder="個数" type="number"/>
 <input id="site" placeholder="現場名" type="text"/>
+<!-- ✅ スマホ対応のため、注文日欄にラベルを追加（心ちゃん指摘） -->
+<label for="date" style="font-weight:bold;">注文日</label>
 <input id="date" type="date"/>
 <button onclick="addInventory()">注文する</button>
 <h3>注文済みリスト</h3>
