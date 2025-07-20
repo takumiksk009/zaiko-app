@@ -307,6 +307,7 @@ function sendToOrderForm(index) {
           const item = child.val();
           if (item.remaining > 0) {
             const tr = document.createElement("tr");
+            tr.setAttribute("data-key", child.key);
             tr.innerHTML = `
               <td>${item.user}</td>
               <td>${item.maker}</td>
@@ -316,6 +317,18 @@ function sendToOrderForm(index) {
               <td>${item.site}</td>
               <td>${item.date}</td>
               <td class="actions">
+  <select class="used-by-selector">
+    <option value="">使用者選択</option>
+    <option value="阿部">阿部</option>
+    <option value="鈴木">鈴木</option>
+    <option value="紺野">紺野</option>
+    <option value="亀岡">亀岡</option>
+    <option value="大槻">大槻</option>
+    <option value="青田">青田</option>
+    <option value="菊田">菊田</option>
+    <option value="高橋">高橋</option>
+    <option value="佐藤">佐藤</option>
+  </select><br>
                 <button onclick="useItem('${child.key}', ${item.remaining})">使用</button>
                 <button onclick="deleteItem('${child.key}')">削除</button>
               </td>
@@ -327,11 +340,15 @@ function sendToOrderForm(index) {
     }
 
     function useItem(key, remaining) {
+  const row = document.querySelector(`[data-key="${key}"]`);
+  const selector = row ? row.querySelector(".used-by-selector") : null;
+  const usedBy = selector ? selector.value : "（未選択）";
       if (remaining > 0) {
         dbRef.child(key).once("value").then(snapshot => {
           const item = snapshot.val();
           const usedRef = firebase.database().ref("usedReports");
           usedRef.push({
+          usedBy: usedBy,
             user: item.user,
             maker: item.maker,
             category: item.category,
@@ -373,7 +390,7 @@ function sendToOrderForm(index) {
     <table><thead>
     <tr>
       <th>登録者</th>
-      <th>型式</th>
+      <th>使用者</th><th>型式</th>
       <th>カテゴリ</th>
       <th>使用日</th>
       <th>納入価格</th>
@@ -384,7 +401,7 @@ function sendToOrderForm(index) {
       html += `
       <tr>
         <td>${item.user || ""}</td>
-        <td>${item.model || ""}</td>
+        <td>${item.usedBy || ""}</td><td>${item.model || ""}</td>
         <td>${item.category || ""}</td>
         <td>${item.date || ""}</td>
         <td><input type="text" class="used-price-input" data-key="${key}" value="${item.price || ''}" placeholder="0円" style="width: 80px; text-align: right;"></td>
