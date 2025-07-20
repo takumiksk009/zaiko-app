@@ -19,7 +19,42 @@
     .tab { margin-bottom: 10px; }
     .tab button { padding: 10px; margin-right: 5px; }
     .hidden { display: none; }
-  </style>
+  
+/* ✅ スマホでも見やすくなるフォーム拡大と整列 */
+form, .section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+input, select, button {
+  padding: 14px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  background: #3498db;
+  color: white;
+  font-weight: bold;
+}
+button:hover {
+  opacity: 0.9;
+}
+@media (max-width: 600px) {
+  h1, h2 {
+    font-size: 22px;
+  }
+  input, select, button {
+    font-size: 18px;
+  }
+}
+</style>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js">
     const tempOrders = [];
 
