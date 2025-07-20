@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>在庫管理サンプル（Firebase対応）</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+<meta charset="utf-8"/>
+<title>在庫管理サンプル（Firebase対応）</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<style>
     body { font-family: sans-serif; background: #f5f5f5; padding: 20px; color: #2c3e50; }
     h1 { text-align: center; }
     .section { margin-bottom: 40px; }
@@ -19,7 +20,7 @@
     .tab button { padding: 10px; margin-right: 5px; }
     .hidden { display: none; }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js">
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js">
     const tempOrders = [];
 
     function addInventory() {
@@ -88,7 +89,7 @@ function sendToOrderForm(index) {
 }
 
 </script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js">
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js">
     const tempOrders = [];
 
     function addInventory() {
@@ -159,52 +160,41 @@ function sendToOrderForm(index) {
 </script>
 </head>
 <body>
-  <h1>在庫管理（Firebase対応）</h1>
-
-  <div class="tab">
+<h1>在庫管理（Firebase対応）</h1>
 <div class="tab">
-
-  </div>
-
-    <button onclick="switchTab('register')">商品登録</button>
-    <button onclick="switchTab('list')">一覧</button>
-    <button onclick="switchTab('used')">使用済み一覧</button>
-
-  </div>
-
-  <div id="register" class="section">
-    <h2>在庫登録</h2>
-    <input type="text" id="user" placeholder="登録者">
-    <input type="text" id="maker" placeholder="メーカー">
-    <input type="text" id="category" placeholder="カテゴリ">
-    <input type="text" id="model" placeholder="型式">
-    <input type="number" id="qty" placeholder="個数">
-    <input type="text" id="site" placeholder="現場名">
-    <input type="date" id="date">
-    <button onclick="addInventory()">注文する</button>
-
-    <h3>注文済みリスト</h3>
-    <div id="orderListContainer">ここに注文した商品が表示されます</div>
-
-  </div>
-
-  
-  <div id="used" class="section hidden">
-    <h2>使用済み在庫一覧</h2>
-    <div id="usedContainer">ここに使用済み一覧が表示されます</div>
-  </div>
-
-  <div id="list" class="section hidden">
-    <h2>在庫一覧</h2>
-    <table>
-      <thead>
-        <tr><th>登録者</th><th>メーカー</th><th>カテゴリ</th><th>型式</th><th>個数</th><th>現場名</th><th>注文日</th><th>操作</th></tr>
-      </thead>
-      <tbody id="inventoryBody"></tbody>
-    </table>
-  </div>
-
-  <script>
+<div class="tab">
+</div>
+<button onclick="switchTab('register')">商品登録</button>
+<button onclick="switchTab('list')">一覧</button>
+<button onclick="switchTab('used')">使用済み一覧</button>
+</div>
+<div class="section" id="register">
+<h2>在庫登録</h2>
+<select id="user"><option value="">登録者選択</option><option value="阿部">阿部</option><option value="鈴木">鈴木</option><option value="紺野">紺野</option><option value="亀岡">亀岡</option><option value="大槻">大槻</option><option value="青田">青田</option><option value="菊田">菊田</option><option value="高橋">高橋</option><option value="佐藤">佐藤</option></select>
+<input id="maker" placeholder="メーカー" readonly="readonly" type="text" value="リンナイ"/>
+<select id="category"><option value="ガス給湯器">ガス給湯器</option><option value="ガス瞬間湯沸器">ガス瞬間湯沸器</option><option value="リモコン">リモコン</option><option value="配管カバー">配管カバー</option></select>
+<input id="model" placeholder="型式" type="text"/>
+<input id="qty" placeholder="個数" type="number"/>
+<input id="site" placeholder="現場名" type="text"/>
+<input id="date" type="date"/>
+<button onclick="addInventory()">注文する</button>
+<h3>注文済みリスト</h3>
+<div id="orderListContainer">ここに注文した商品が表示されます</div>
+</div>
+<div class="section hidden" id="used">
+<h2>使用済み在庫一覧</h2>
+<div id="usedContainer">ここに使用済み一覧が表示されます</div>
+</div>
+<div class="section hidden" id="list">
+<h2>在庫一覧</h2>
+<table>
+<thead>
+<tr><th>登録者</th><th>メーカー</th><th>カテゴリ</th><th>型式</th><th>個数</th><th>現場名</th><th>注文日</th><th>操作</th></tr>
+</thead>
+<tbody id="inventoryBody"></tbody>
+</table>
+</div>
+<script>
     const firebaseConfig = {
       apiKey: "AIzaSyARhO9hECPxXopKRBZrHBAkboqmCxY651i0",
       authDomain: "zaiko-app-54fa6.firebaseapp.com",
@@ -423,7 +413,6 @@ function sendToOrderForm(index) {
 }
 
 </script>
-
 <script>
 const tempOrdersRef = firebase.database().ref("tempOrders");
 
@@ -506,7 +495,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 100);
 });
 </script>
-
 <!-- ✅ 修正チェック項目（Firebase保存専用バージョン v4）
 1. 古い tempOrders = [] 削除済み: ✅
 2. addInventory() はFirebase pushに完全移行: ✅
@@ -514,10 +502,8 @@ window.addEventListener("DOMContentLoaded", () => {
 4. 更新しても注文リストが保持される構成: ✅
 5. 見た目・構造は完全維持: ✅
 -->
-
 </body>
 </html>
-
 <!-- ✅ 修正チェック項目一覧
 1. localStorage の残存チェック: ❌
 2. usedLogs の残存チェック: ❌
@@ -530,8 +516,6 @@ window.addEventListener("DOMContentLoaded", () => {
 前回の失敗: 使用ボタンに Firebase push() がなかった
 今回の修正: useItem() 内に usedReports.push() を追加し記録対応済み
 -->
-
-
 <!-- ✅ 修正チェック項目（再追加）
 1. localStorage の残存チェック: ❌
 2. usedLogs の残存チェック: ❌
@@ -544,8 +528,6 @@ window.addEventListener("DOMContentLoaded", () => {
 前回の失敗: 一覧タブ以外でも在庫一覧が表示されていた（renderInventory が常に走っていた）
 今回の修正: DOMContentLoaded で renderInventory を呼ばず、switchTab 経由のみに制限
 -->
-
-
 <!-- ✅ 修正チェック項目（最終版）
 1. localStorage の残存チェック: ❌
 2. usedLogs の残存チェック: ❌
@@ -558,8 +540,6 @@ window.addEventListener("DOMContentLoaded", () => {
 前回の失敗: 使用済み一覧を見たあと「一覧」に戻ると表示が残ってしまう
 今回の修正: switchTab() 内で usedContainer の中身をリセットするように対応済み
 -->
-
-
 <!-- ✅ 修正チェック項目（注文→一時表示→登録フロー）
 1. 登録は一時保存され「下の一覧」に表示: ✅
 2. 「登録」ボタンでFirebaseにpush: ✅
@@ -567,15 +547,12 @@ window.addEventListener("DOMContentLoaded", () => {
 4. レイアウト・構造の順序変更なし: ✅
 5. 既存 addInventory 関数の動作変更済み: ✅
 -->
-
-
 <!-- ✅ 修正チェック項目（注文書への送信機能追加）
 1. 注文済みリストに「注文書に送る」ボタンが追加された: ✅
 2. localStorage に JSON 形式で保存されている: ✅
 3. rinnai_order_form.html に遷移する処理が動作: ✅
 4. 構造・順番・見た目を一切崩さず維持: ✅
 -->
-
 <script>
 
 // ✅ 注文済みリストから削除
@@ -589,7 +566,6 @@ function deleteOrderFromFirebase(key) {
 }
 
 </script>
-
 <script>
 // ✅ 使用済みデータから削除
 function deleteUsedReport(key) {
@@ -601,7 +577,6 @@ function deleteUsedReport(key) {
   }
 }
 </script>
-
 <script>
 let usedEditMode = false;
 
