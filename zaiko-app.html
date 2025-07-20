@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>在庫管理サンプル</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 20px; color: #2c3e50; }
+    h1 { text-align: center; }
+    .section { margin-bottom: 40px; }
+    input, button, select {
+      padding: 8px; margin: 4px 0; font-size: 14px; width: 100%;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #3498db; color: white; }
+    .actions button { margin: 0 4px; }
+    .tab { margin-bottom: 10px; }
+    .tab button { padding: 10px; margin-right: 5px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>在庫管理（1ファイルサンプル）</h1>
+
+  <div class="tab">
+    <button onclick="switchTab('register')">登録</button>
+    <button onclick="switchTab('list')">一覧</button>
+  </div>
+
+  <div id="register" class="section">
+    <h2>在庫登録</h2>
+    <input type="text" id="user" placeholder="登録者">
+    <input type="text" id="maker" placeholder="メーカー">
+    <input type="text" id="category" placeholder="カテゴリ">
+    <input type="text" id="model" placeholder="型式">
+    <input type="number" id="qty" placeholder="個数">
+    <input type="text" id="site" placeholder="現場名">
+    <input type="date" id="date">
+    <button onclick="addInventory()">登録</button>
+  </div>
+
+  <div id="list" class="section hidden">
+    <h2>在庫一覧</h2>
+    <table>
+      <thead>
+        <tr><th>登録者</th><th>メーカー</th><th>カテゴリ</th><th>型式</th><th>個数</th><th>現場名</th><th>注文日</th><th>操作</th></tr>
+      </thead>
+      <tbody id="inventoryBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "zaiko_data";
+
+    function switchTab(tabId) {
+      document.getElementById('register').classList.add('hidden');
+      document.getElementById('list').classList.add('hidden');
+      document.getElementById(tabId).classList.remove('hidden');
+      if (tabId === 'list') renderInventory();
+    }
+
+    function getData() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function addInventory() {
+      const data = getData();
+      const newItem = {
+        user: document.getElementById('user').value,
+        maker: document.getElementById('maker').value,
+        category: document.getElementById('category').value,
+        model: document.getElementById('model').value,
+        qty: parseInt(document.getElementById('qty').value) || 0,
+        site: document.getElementById('site').value,
+        date: document.getElementById('date').value,
+        id: Date.now()
+      };
+      data.push(newItem);
+      saveData(data);
+      alert("登録しました！");
+      document.querySelectorAll('#register input').forEach(el => el.value = "");
+    }
+
+    function renderInventory() {
+      const data = getData();
+      const tbody = document.getElementById('inventoryBody');
+      tbody.innerHTML = "";
+      data.filter(item => item.qty > 0).forEach((item, index) => {
+        // 🔧 修正内容：qty（残数）が0の在庫は表示から除外（自動非表示化）
+        // 前回の失敗：全データ表示していたため、残数0が残っていた
+    
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.user}</td>
+          <td>${item.maker}</td>
+          <td>${item.category}</td>
+          <td>${item.model}</td>
+          <td>${item.qty}</td>
+          <td>${item.site}</td>
+          <td>${item.date}</td>
+          <td class="actions">
+            <button onclick="useItem(${item.id})">使用</button>
+            <button onclick="deleteItem(${item.id})">削除</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function useItem(id) {
+      let data = getData();
+      data = data.map(item => {
+        if (item.id === id && item.qty > 0) {
+          item.qty -= 1;
+        }
+        return item;
+      });
+      saveData(data);
+      renderInventory();
+    }
+
+    function deleteItem(id) {
+      let data = getData().filter(item => item.id !== id);
+      saveData(data);
+      renderInventory();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderInventory();
+    });
+  </script>
+</body>
+</html>
