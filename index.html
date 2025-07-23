@@ -76,6 +76,92 @@ th, td {
   font-size: 15px;
   padding: 10px;
 }
+
+/* ✅ 注文済みリストの列幅拡張＆折り返し防止 */
+.table-scroll table th,
+.table-scroll table td {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* ✅ PC時は全体的にもっと横幅を取れるように */
+@media (min-width: 769px) {
+  .table-scroll table {
+    min-width: 1200px;
+  }
+}
+
+/* ✅ スマホ表示でもスクロール対応を保持 */
+@media (max-width: 768px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll table {
+    min-width: 1000px;
+  }
+}
+
+
+/* ✅ 枠内スクロールに固定（はみ出さず美しく） */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+}
+
+.table-scroll table {
+  min-width: 1100px;
+  table-layout: fixed;
+}
+
+.table-scroll th,
+.table-scroll td {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* ✅ 操作列（使用者選択 + ボタン）を広げてすべて表示 */
+.actions {
+  min-width: 180px;
+}
+.actions select,
+.actions button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ✅ 操作列（使用者選択 + ボタン）を広げてすべて表示 */
+.actions {
+  min-width: 220px;
+  text-align: center;
+  vertical-align: middle;
+}
+.actions select,
+.actions button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 4px;
+}
+
+/* ✅ テーブル全体の幅を自動調整に */
+.table-scroll table {
+  min-width: 1200px;
+  table-layout: auto;
+}
+
+/* ✅ 各列の重なり防止（現場名と注文日） */
+.table-scroll td:nth-child(6),  /* 現場名 */
+.table-scroll td:nth-child(7)   /* 注文日 */
+{
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js">
     const tempOrders = [];
