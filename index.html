@@ -305,7 +305,7 @@ tr.category-divider td {
       tempOrders.push(newItem);
       renderOrderList();
       alert("注文リストに追加しました！");
-      document.querySelectorAll('#register input').forEach(el => el.value = "");
+      document.querySelectorAll('#register input').forEach(el => { if (el.id !== 'maker') el.value = ''; });
     }
 
     function renderOrderList() {
@@ -383,7 +383,7 @@ function sendToOrderForm(index) {
       tempOrders.push(newItem);
       renderOrderList();
       alert("注文リストに追加しました！");
-      document.querySelectorAll('#register input').forEach(el => el.value = "");
+      document.querySelectorAll('#register input').forEach(el => { if (el.id !== 'maker') el.value = ''; });
     }
 
     function renderOrderList() {
@@ -541,7 +541,7 @@ tr.category-divider td {
       };
       dbRef.push(newItem);
       alert("登録しました！");
-      document.querySelectorAll('#register input').forEach(el => el.value = "");
+      document.querySelectorAll('#register input').forEach(el => { if (el.id !== 'maker') el.value = ''; });
     }
 
     function renderInventory() {
@@ -682,7 +682,7 @@ tr.category-divider td {
       tempOrders.push(newItem);
       renderOrderList();
       alert("注文リストに追加しました！");
-      document.querySelectorAll('#register input').forEach(el => el.value = "");
+      document.querySelectorAll('#register input').forEach(el => { if (el.id !== 'maker') el.value = ''; });
     }
 
     function renderOrderList() {
@@ -751,7 +751,7 @@ function addInventory() {
   };
   tempOrdersRef.push(newItem);
   alert("注文リストに追加しました！");
-  document.querySelectorAll('#register input').forEach(el => el.value = "");
+  document.querySelectorAll('#register input').forEach(el => { if (el.id !== 'maker') el.value = ''; });
   renderOrderListFromFirebase();
 }
 
@@ -887,7 +887,7 @@ function renderInventory() {
       <option value="高橋">高橋</option>
       <option value="佐藤">佐藤</option>
     </select>
-    <button class="btn-orange" style="width: 90%;">使用する</button>
+    <button class="btn-orange" style="width: 90%;" onclick="useItem(\'${item.key}\', ${item.remaining})">使用する</button>
     <button class="btn-red" style="width: 90%;" onclick="deleteItem('${item.key}')">削除</button>
     ${item.category === 'ガス給湯器' ? `
       <div style="display: flex; width: 90%; align-items: center; gap: 8px;">
@@ -1038,7 +1038,7 @@ function saveUsedPrices() {
 
 function deleteSelectedUsed() {
   const checked = document.querySelectorAll('.used-delete-check:checked');
-  if (!checked.length) return alert("削除する項目が選択されていません");
+  if (!checked.length) return alert("削除する項目が選択されていません！");
   if (!confirm("選択した項目を削除します。よろしいですか？")) return;
 
   const usedRef = firebase.database().ref("usedReports");
