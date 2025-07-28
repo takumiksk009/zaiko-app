@@ -1038,7 +1038,7 @@ function saveUsedPrices() {
 
 function deleteSelectedUsed() {
   const checked = document.querySelectorAll('.used-delete-check:checked');
-  if (!checked.length) return alert("削除する項目が選択されていません！");
+  if (!checked.length) return alert("削除する項目が選択されていません");
   if (!confirm("選択した項目を削除します。よろしいですか？")) return;
 
   const usedRef = firebase.database().ref("usedReports");
