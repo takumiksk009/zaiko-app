@@ -888,7 +888,7 @@ function renderInventory() {
       <option value="佐藤">佐藤</option>
     </select>
     <button class="btn-orange" style="width: 90%;">使用する</button>
-    <button class="btn-red" style="width: 90%;">削除</button>
+    <button class="btn-red" style="width: 90%;" onclick="deleteItem('${item.key}')">削除</button>
     ${item.category === 'ガス給湯器' ? `
       <div style="display: flex; width: 90%; align-items: center; gap: 8px;">
         <span>キ－</span><input type="text" class="ki-input" placeholder="キ－入力欄" style="flex: 1;">
