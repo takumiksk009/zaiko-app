@@ -592,7 +592,9 @@ tr.category-divider td {
         dbRef.child(key).once("value").then(snapshot => {
           const item = snapshot.val();
           const usedRef = firebase.database().ref("usedReports");
-          usedRef.push({
+          const keyInput = row.querySelector('.ki-input')?.value || '';
+  const remarks = row.querySelector('.note-input')?.value || '';
+  usedRef.push({
           usedBy: usedBy,
             user: item.user,
             maker: item.maker,
@@ -600,7 +602,9 @@ tr.category-divider td {
             model: item.model,
             qty: 1,
             site: item.site,
-            date: new Date().toISOString().split("T")[0]
+            date: new Date().toISOString().split("T")[0],
+            keyInput: keyInput,
+            remarks: remarks
           });
         });
         dbRef.child(key).update({ remaining: remaining - 1 });
@@ -638,7 +642,7 @@ tr.category-divider td {
       <th>登録者</th>
       <th>使用者</th><th>型式</th>
       <th>カテゴリ</th>
-      <th>使用日</th>
+      <th>使用日</th><th>キー</th><th>備考</th>
       <th>納入価格</th>
       <th class="used-checkbox-col" style="display:none;">選択</th>
     </tr></thead><tbody>`;
@@ -649,7 +653,7 @@ tr.category-divider td {
         <td>${item.user || ""}</td>
         <td>${item.usedBy || ""}</td><td>${item.model || ""}</td>
         <td>${item.category || ""}</td>
-        <td>${item.date || ""}</td>
+        <td>${item.date || ""}</td><td>${item.keyInput || ''}</td><td>${item.remarks || ''}</td>
         <td><input type="text" class="used-price-input" data-key="${key}" value="${item.price || ''}" placeholder="0円" style="width: 80px; text-align: right;"></td>
         <td class="used-checkbox-col" style="display:none;"><input type="checkbox" class="used-delete-check" data-key="${key}"></td>
       </tr>`;
@@ -834,7 +838,8 @@ function renderInventory() {
       "ガス給湯器": [],
       "リモコン": [],
       "ガス瞬間湯沸器": [],
-      "ガスコンロ": []
+      "ガスコンロ": [],
+      "配管カバー": []
     };
 
     snapshot.forEach(child => {
